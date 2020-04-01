@@ -144,3 +144,18 @@ chmod +x *.sh
 ./docker-build.sh
 ./docker-run.sh
 ```
+
+**2020-03-31** 目标是可单点登录支持第三方无session认证(oauth)
+1: explodeWar 把cas/build/cas-resources放到src/main/resources
+2：admin/123456 密码不加密
+3：jwt获取 http://localhost:8080/cas/oauth2.0/token?grant_type=password&client_id=client&client_secret=secret&username=admin&password=123456
+4：帐号表（sys_user）登录以user_name为查询对象，找回密码问题（sys_user_question）应该用user_name而不是user_id，这个有问题，要做转换，最好代码实现这个功能；
+5：生成的token为
+{
+    "access_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.ZXlKNmFYQWlPaUpFUlVZaUxDSmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UTBKRExVaFRNalUySWl3aVkzUjVJam9pU2xkVUlpd2lkSGx3SWpvaVNsZFVJbjAuLjdQT2tac2xNUUI1TTEtQTRxVm94bVEuYmJDQTBCWGVhbUNDNDBZdVhuLW1KMm1kUWVjaFFWNWV2SUpYMG9Wbk8wTHNPdXRCLWdORlNqM3Jib1c2djdrdzVKMUxOT00xR25pU1VGenlEY1kxRG51S25PQW96Um0wU0RmbWszclVibENicXJDbVFIUndkdUpBR2dpalZLczg1LXM0QVp0a003aGpndGtHaUd2VnhiSlFhV2NMVENDYUwxRTdLSnFsQTQ5UEZ1ZzYxVENVX1JwMXFvbDZwZHRYSTBqZ1dmN2hXc0RqU3dXZG1fdkt4eVZNcHhzd2k5MzdkWlloT24ySG9aQTRrd2tIWW03d3J5dFhkZU1TVnQwb3NBT3ZaMjN0aGpsajQtTWtkaHpMcnpqdjNCamlQY2hUTi01REdRNTk4Ty1Vb05zQndSdnJpT3V4YWVVT0VwcVgud3JJR0hXa2loRDl1VFFYSmJYUGRlZw.HbM3Q3dKhfafc8MJnLJn2hUYcdZdxi-dNkPUXfiuzU3wYOxeGANtQfr-uV3TxHhrwrp0tSI6wDXsxVnbHvsFnQ",
+    "token_type": "bearer",
+    "expires_in": 28800,
+    "scope": ""
+}
+可转换成
+{"sub":"admin","user_name":"admin","roles":[],"iss":"https:\/\/cas.example.org:8443\/cas","nonce":"","client_id":"client","aud":"client","grant_type":"PASSWORD","user_id":"1","permissions":[],"scope":[],"claims":[],"scopes":[],"state":"","exp":1585740764,"iat":1585711964,"jti":"AT-1-EqlI-LmNKFRoo4WlcpOFdrCe3alv4rUa","email":"huang.wenbin@foxmail.com"}

@@ -1,0 +1,33 @@
+{
+  "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "^(https|imaps)://.*",
+  "name": "OAUTH",
+  "jwtAccessToken": true,
+  "id": 1,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes": [ "java.util.ArrayList", [ "user_id","user_name", "phone", "email"] ]
+  },
+  "supportedGrantTypes": [ "java.util.HashSet", [ "password" ] ],
+  "properties": {
+    "@class": "java.util.HashMap",
+    "accessTokenAsJwtSigningKey": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [ "java.util.HashSet", [ "ZHfrJF9JKTF3ee6pXZvFVSbgArhKIEGHk8zaErUJTZPhhjGh9Xjz_CGhtFDw7UKOmagZSX6KTSW4sd12C-jJfQ" ] ]
+    },
+    "accessTokenAsJwtEncryptionKey": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [ "java.util.HashSet", [ "PMJEy6q6-1R029IYhnoI5Rm4ub66RQfxy8KDeXkG1_o" ] ]
+    },
+    "accessTokenAsJwtSigningEnabled": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [ "java.util.HashSet", [ "true" ] ]
+    },
+    "accessTokenAsJwtEncryptionEnabled": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values": [ "java.util.HashSet", [ "true" ] ]
+    }
+  }
+}

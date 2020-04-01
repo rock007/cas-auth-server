@@ -1,0 +1,156 @@
+##部分不生效
+cas:
+  authn:
+    token:
+      crypto:
+        encryptionEnabled: true
+        signingEnabled: true
+        signing:
+          key: ZHfrJF9JKTF3ee6pXZvFVSbgArhKIEGHk8zaErUJTZPhhjGh9Xjz_CGhtFDw7UKOmagZSX6KTSW4sd12C-jJfQ
+          keySize: 512
+        encryption:
+          key: PMJEy6q6-1R029IYhnoI5Rm4ub66RQfxy8KDeXkG1_o
+          keySize: 256
+          #alg: AES
+        enabled: true
+      oauth:
+        code:
+          timeToKillInSeconds: 300000
+          numberOfUses: 10000
+        accessToken:
+          timeToKillInSeconds: 7200000
+          maxTimeToLiveInSeconds: 28800000
+
+        deviceToken:
+          refreshInterval: PT15S
+          userCodeLength: 8
+        #grants:
+        #  resourceOwner:
+        #    requireServiceHeader: true
+      pm:
+        enabled: true
+        #密码强度
+        #policyPattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d){8,10}
+        reset:
+          expirationMinutes: 10
+          # Enable Questions and Answers for PM
+          securityQuestionsEnabled: true
+          mail:
+            text: 请使用以下链接重置您的密码： %s
+            subject: 重置密码邮件
+            from: i_am_ok@163.com
+            attributeName: mail
+            html: false
+        autoLogin: false
+
+
+    jdbc:
+      query[0]:
+        sql: select password from sys_user where user_name=?
+        healthQuery:
+        isolateInternalQueries: false
+        url: jdbc:mysql://127.0.0.1:3306/auth_center?autoReconnect=true&characterEncoding=utf-8&useUnicode=true&useSSL=false&serverTimezone=GMT
+        failFast: true
+        isolationLevelName: ISOLATION_READ_COMMITTED
+        dialect: org.hibernate.dialect.MySQLDialect
+        leakThreshold: 10
+        propagationBehaviorName: PROPAGATION_REQUIRED
+        batchSize: 1
+        user: root
+        ddlAuto: validate
+        maxAgeDays: 180
+        password: 123456
+        autocommit: false
+        driverClass: com.mysql.cj.jdbc.Driver
+        idleTimeout: 5000
+
+        #配置查询字段的名字，否则认证失败
+        fieldPassword: password
+        #指定过期字段，1为过期，若过期不可用
+        fieldExpired: expired
+        #为不可用字段段，1为不可用，需要修改密码
+        fieldDisabled: disabled
+
+        #默认为NONE密码明文认证，可以自定义加密算法类(implements PasswordEncoder)
+        #passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
+        passwordEncoder:
+          type: NONE
+          #encodingAlgorithm: MD5
+          #characterEncoding: UTF-8
+
+    #多属性返回
+    attributeRepository:
+      jdbc[0]:
+        singleRow: true
+        order: 0
+        url: jdbc:mysql://127.0.0.1:3306/auth_center?autoReconnect=true&characterEncoding=utf-8&useUnicode=true&useSSL=false&serverTimezone=GMT
+        user: root
+        password: 123456
+        username: user_name
+        sql: select * from sys_user where user_name=?
+        #取消以下两行则在返回属性中仅包含表中的这两个字段属性，注释情况下返回该表行所有属性
+        #cas.authn.attributeRepository.jdbc[0].attributes.id=id
+        #cas.authn.attributeRepository.jdbc[0].attributes.name=name
+        dialect: org.hibernate.dialect.MySQLDialect
+        ddlAuto: none
+        driverClass: com.mysql.cj.jdbc.Driver
+        leakThreshold: 10
+        propagationBehaviorName: PROPAGATION_REQUIRED
+        batchSize: 1
+        healthQuery: SELECT 1
+        failFast: true
+
+
+  #使用reids存储授权的服务，初始化数据从services下加载json
+  ## 使用本地
+  serviceRegistry:
+    initFromJson: true
+  #    redis:
+  #      host: 56wb.com
+  #      port: 6379
+  #      password:
+  #      database: 0
+  #      timeout: 2000
+  #      useSsl: false
+
+  #票据持久化(redis)，用于分布式管理用户票据
+  ticket:
+    registry:
+      redis:
+        host: 127.0.0.1
+        port: 6379
+        password:
+        timeout: 2000
+        useSsl: false
+      cleaner:
+        schedule:
+          enabled: false
+    tgt:
+      # 启用rememberMe
+      rememberMe:
+        enabled: true
+        timeToKillInSeconds: 28800
+      # tgt有效期（会话超时时间）
+      #      timeout:
+      #        maxTimeToLiveInSeconds: 28800
+      maxTimeToLiveInSeconds: 288000
+      timeToKillInSeconds: 72000
+    st:
+      maxLength: 20
+      # ST使用次数
+      numberOfUses: 1
+      # ST有效期600S
+      timeToKillInSeconds: 600
+  #关闭https验证
+  tgc:
+    secure: false
+
+    # 关闭TGC安全严重，公网慎用
+  #    crypto:
+  #      enabled: false
+  warningCookie:
+    secure: false
+  #单点登出
+  slo:
+    disabled: false
+    asynchronous: true

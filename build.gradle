@@ -72,6 +72,25 @@ apply from: rootProject.file("gradle/dockerjib.gradle")
 dependencies {
     // Other CAS dependencies/modules may be listed here...
     // implementation "org.apereo.cas:cas-server-support-json-service-registry:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-generic:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-oauth-webflow:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-jdbc:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-redis-ticket-registry:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-token-tickets:${casServerVersion}"
+
+    implementation "org.apereo.cas:cas-server-support-pm:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-pm-webflow:${casServerVersion}"
+    //implementation "org.apereo.cas:cas-server-support-pm-jdbc:${casServerVersion}"
+
+    implementation "org.apereo.cas:cas-server-support-validation:${casServerVersion}"
+
+    implementation "org.apereo.cas:cas-server-support-rest:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-rest-tokens:${casServerVersion}"
+
+    implementation "org.apereo.cas:cas-server-support-actions:${casServerVersion}"
+
+    implementation "org.bouncycastle:bcprov-jdk15on:1.59"
+    compile group: 'org.bitbucket.b_c', name: 'jose4j', version: '0.6.5'
 }
 
 tasks.findByName("jibDockerBuild")

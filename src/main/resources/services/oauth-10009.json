@@ -1,0 +1,14 @@
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "^(https|imaps)://.*",
+  "name" : "OAUTH",
+  "jwtAccessToken": true,
+  "id" : 10009,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "user_id","user_name", "phone", "email" ] ]
+  },
+  "supportedGrantTypes": [ "java.util.HashSet", [ "password" ] ]
+}

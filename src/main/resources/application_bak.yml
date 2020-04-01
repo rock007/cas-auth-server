@@ -1,0 +1,435 @@
+##
+# CAS Web Application Embedded Server SSL Configuration
+#!!不要ssl
+#server.ssl.key-store=file:/etc/cas/thekeystore
+#server.ssl.key-store-password=changeit
+#server.ssl.key-password=changeit
+#server.ssl.enabled=true
+##
+# CAS Web Application Embedded Server Configuration
+#
+ server:
+    port: 8080
+    servlet:
+      context-path: /cas
+   ##
+   # CAS Log4j Configuration
+   #
+   # logging.config=file:/etc/cas/log4j2.xml
+      context-parameters:
+        isLog4jAutoInitializationDisabled: true
+
+   ##
+   # CAS Web Application Session Configuration
+   #
+       session:
+          timeout: PT30S
+          cookie:
+            http-only: true
+          tracking-modes: COOKIE
+
+
+  ##
+  # CAS Web Application JMX/Spring Configuration
+  #
+  spring:
+    jmx:
+      enabled: false
+
+    ##
+    # CAS AspectJ Configuration
+    #
+    aop:
+      auto: true
+      proxy-target-class: true
+
+    ##
+  # CAS Web Application Http Encoding Configuration
+  #
+    http:
+      encoding:
+        charset: UTF-8
+        enabled: true
+        force: true
+
+
+   ##
+   # CAS Thymeleaf View Configuration
+   #
+    thymeleaf:
+      encoding: UTF-8
+      cache: true
+      mode: HTML
+      template-resolver-order: 100
+
+   ##
+  # Allow configuration classes to override bean definitions from Spring Boot
+  #
+    main:
+      allow-bean-definition-overriding: true
+      lazy-initialization: false
+
+   # Endpoint Security Basic Authentication
+    security:
+      user:
+        name: casuser
+   #spring.security.user.password=123456
+   # spring.security.user.roles=
+
+  ##
+  # CAS Cloud Bus Configuration
+  #
+    cloud:
+      bus:
+        enabled: false
+      discovery:
+        client:
+          composite-indicator:
+            enabled: false
+  # Indicates that systemPropertiesOverride can be used. Set to false to prevent users from changing the default accidentally. Default true.
+      config:
+        allow-override: true
+
+  # External properties should override system properties.
+        override-system-properties: false
+
+  # When allowOverride is true, external properties should take lowest priority, and not override any existing property sources (including local config files).
+        override-none: false
+
+  # spring.cloud.bus.refresh.enabled=true
+  # spring.cloud.bus.env.enabled=true
+  # spring.cloud.bus.destination=CasCloudBus
+  # spring.cloud.bus.ack.enabled=true
+
+  ##
+  # CAS Web Application Endpoints Security
+  #
+  management:
+    endpoints:
+      enabled-by-default: false
+      shutdown:
+        enabled: false
+      restart:
+        enabled: false
+
+      web:
+        base-path: /actuator
+        exposure:
+          include: info,health,status,configurationMetadata
+      jmx:
+        exposure:
+          exclude: *
+
+  # web.exposure.include=*
+  # management.endpoints.web.path-mapping.health=status
+  # management.endpoint.health.show-details=when_authorized
+
+  server:
+    add-application-context-header: false
+
+  # Define a CAS-specific "WARN" status code and its order
+  health:
+   status:
+    order: WARN,DOWN,OUT_OF_SERVICE,UNKNOWN,UP
+
+  # Define health indicator behavior (requires cas-server-core-monitor)
+   memoryHealthIndicator:
+    enabled: true
+  # Define a default that doesn't require module /cas/actuator/health/ping serves as status
+   ping:
+    enabled: true
+
+  # turn off health indicators by default
+   defaults:
+    enabled: false
+
+
+
+
+  ##
+  # CAS Metrics Configuration
+  #
+management:
+    metrics:
+      enable:
+        logback: true
+        process:
+          files: true
+          cpu: true
+          uptime: true
+        system:
+          cpu: true
+        start:
+          time: true
+      web:
+        server:
+          auto-time-requests: true
+
+      export:
+        atlas:
+          enabled: false
+        datadog:
+          enabled: false
+        ganglia:
+          enabled: false
+        graphite:
+          enabled: false
+        influx:
+          enabled: false
+        jmx:
+          enabled: false
+        newrelic:
+          enabled: false
+        prometheus:
+          enabled: false
+        signalfx:
+          enabled: false
+        statsd:
+          enabled: false
+        wavefront:
+          enabled: false
+        simple:
+          enabled: true
+
+
+
+  ##
+  # CAS Authentication Credentials
+  #静态帐号测试
+  #cas.authn.accept.users=casuser::Mellon
+  #cas.authn.accept.name=Static Credentials
+
+  #配置数据库认证方式，示例为query方式
+  #注意数据库字段与数据库名字默认时区分大小写的，CAS_USER不能查到该表
+
+cas:
+  authn:
+    token:
+      crypto:
+        encryptionEnabled: true
+        signingEnabled: true
+        signing:
+          key: ZHfrJF9JKTF3ee6pXZvFVSbgArhKIEGHk8zaErUJTZPhhjGh9Xjz_CGhtFDw7UKOmagZSX6KTSW4sd12C-jJfQ
+          keySize: 512
+        encryption:
+          key: PMJEy6q6-1R029IYhnoI5Rm4ub66RQfxy8KDeXkG1_o
+          keySize: 256
+          #alg: AES
+        enabled: true
+      oauth:
+        code:
+          timeToKillInSeconds: 300000
+          numberOfUses: 10000
+        accessToken:
+          timeToKillInSeconds: 7200000
+          maxTimeToLiveInSeconds: 28800000
+
+        deviceToken:
+          refreshInterval: PT15S
+          userCodeLength: 8
+        #grants:
+        #  resourceOwner:
+        #    requireServiceHeader: true
+      pm:
+        enabled: true
+        #policyPattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d){8,10}
+        reset:
+          expirationMinutes: 10
+          securityQuestionsEnabled: true
+          mail:
+            text: 请使用以下链接重置您的密码： %s
+            subject: 重置密码邮件
+            from: xxxxxx@163.com
+        autoLogin: false
+    jdbc:
+      query[0]:
+        sql: select password from sys_user where username=?
+        healthQuery:
+        isolateInternalQueries: false
+        url: jdbc:mysql://127.0.0.1:3306/auth_center?autoReconnect=true&characterEncoding=utf-8&useUnicode=true&useSSL=false&serverTimezone=GMT
+        failFast: true
+        isolationLevelName: ISOLATION_READ_COMMITTED
+        dialect: org.hibernate.dialect.MySQLDialect
+        leakThreshold: 10
+        propagationBehaviorName: PROPAGATION_REQUIRED
+        batchSize: 1
+        user: root
+        ddlAuto: validate
+        maxAgeDays: 180
+        password: 123456
+        autocommit: false
+        driverClass: com.mysql.cj.jdbc.Driver
+        idleTimeout: 5000
+
+        #配置查询字段的名字，否则认证失败
+        fieldPassword: password
+        #指定过期字段，1为过期，若过期不可用
+        fieldExpired: expired
+        #为不可用字段段，1为不可用，需要修改密码
+        fieldDisabled: disabled
+
+        #默认为NONE密码明文认证，可以自定义加密算法类(implements PasswordEncoder)
+        #passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
+        passwordEncoder:
+          type: NONE
+        # encodingAlgorithm=MD5
+        # characterEncoding=UTF-8
+
+  #多属性返回
+    attributeRepository:
+      jdbc[0]:
+        singleRow: true
+        order: 0
+        url: jdbc:mysql://127.0.0.1:3306/auth_center?autoReconnect=true&characterEncoding=utf-8&useUnicode=true&useSSL=false&serverTimezone=GMT
+        username: name
+        user: root
+        password: 123456
+        sql: select * from sys_user where username=?
+        #取消以下两行则在返回属性中仅包含表中的这两个字段属性，注释情况下返回该表行所有属性
+        #cas.authn.attributeRepository.jdbc[0].attributes.id=id
+        #cas.authn.attributeRepository.jdbc[0].attributes.name=name
+        dialect: org.hibernate.dialect.MySQLDialect
+        ddlAuto: none
+        driverClass: com.mysql.cj.jdbc.Driver
+        leakThreshold: 10
+        propagationBehaviorName: PROPAGATION_REQUIRED
+        batchSize: 1
+        healthQuery: SELECT 1
+        failFast: true
+  view:
+    cas2:
+      v3ForwardCompatible: true
+
+  server:
+    name: http://127.0.0.1:8080
+    prefix: http://127.0.0.1:8080/cas
+
+
+  #使用reids存储授权的服务，初始化数据从services下加载json
+  ## 使用本地
+  serviceRegistry:
+    initFromJson: true
+  #    redis:
+  #      host: 56wb.com
+  #      port: 6379
+  #      password:
+  #      database: 0
+  #      timeout: 2000
+  #      useSsl: false
+
+  #票据持久化(redis)，用于分布式管理用户票据
+  ticket:
+    registry:
+      redis:
+        host: 127.0.0.1
+        port: 6379
+        password:
+        timeout: 2000
+        useSsl: false
+      cleaner:
+        schedule:
+          enabled: false
+    tgt:
+      # 启用rememberMe
+      rememberMe:
+        enabled: true
+        timeToKillInSeconds: 28800
+      # tgt有效期（会话超时时间）
+      #      timeout:
+      #        maxTimeToLiveInSeconds: 28800
+      maxTimeToLiveInSeconds: 288000
+      timeToKillInSeconds: 72000
+    st:
+      maxLength: 20
+      # ST使用次数
+      numberOfUses: 1
+      # ST有效期600S
+      timeToKillInSeconds: 600
+  #关闭https验证
+  tgc:
+    secure: false
+
+    # 关闭TGC安全严重，公网慎用
+  #    crypto:
+  #      enabled: false
+  warningCookie:
+    secure: false
+  #单点登出
+  slo:
+    disabled: false
+    asynchronous: true
+
+
+
+
+#配置数据库认证方式，示例为query方式
+#注意数据库字段与数据库名字默认时区分大小写的，CAS_USER不能查到该表
+  cas.authn.jdbc.query[0].sql=select password from sys_user where username=?
+  cas.authn.jdbc.query[0].healthQuery=
+  cas.authn.jdbc.query[0].isolateInternalQueries=false
+  cas.authn.jdbc.query[0].url=jdbc:mysql://127.0.0.1:3306/auth_center?autoReconnect=true&characterEncoding=utf-8&useUnicode=true&useSSL=false&serverTimezone=GMT
+  cas.authn.jdbc.query[0].failFast=true
+  cas.authn.jdbc.query[0].isolationLevelName=ISOLATION_READ_COMMITTED
+  cas.authn.jdbc.query[0].dialect=org.hibernate.dialect.MySQLDialect
+  cas.authn.jdbc.query[0].leakThreshold=10
+  cas.authn.jdbc.query[0].propagationBehaviorName=PROPAGATION_REQUIRED
+  cas.authn.jdbc.query[0].batchSize=1
+  cas.authn.jdbc.query[0].user=root
+  cas.authn.jdbc.query[0].ddlAuto=validate
+  cas.authn.jdbc.query[0].maxAgeDays=180
+  cas.authn.jdbc.query[0].password=123456
+  cas.authn.jdbc.query[0].autocommit=false
+  cas.authn.jdbc.query[0].driverClass=com.mysql.cj.jdbc.Driver
+  cas.authn.jdbc.query[0].idleTimeout=5000
+
+  #配置查询字段的名字，否则认证失败
+  cas.authn.jdbc.query[0].fieldPassword=password
+  #指定过期字段，1为过期，若过期不可用
+  cas.authn.jdbc.query[0].fieldExpired=expired
+  #为不可用字段段，1为不可用，需要修改密码
+  cas.authn.jdbc.query[0].fieldDisabled=disabled
+
+  #默认为NONE密码明文认证，可以自定义加密算法类(implements PasswordEncoder)
+  #cas.authn.jdbc.query[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
+  cas.authn.jdbc.query[0].passwordEncoder.type=NONE
+  #cas.authn.jdbc.query[0].passwordEncoder.encodingAlgorithm=MD5
+  #cas.authn.jdbc.query[0].passwordEncoder.characterEncoding=UTF-8
+
+  #多属性返回
+  cas.authn.attributeRepository.jdbc[0].singleRow=true
+  cas.authn.attributeRepository.jdbc[0].order=0
+  cas.authn.attributeRepository.jdbc[0].url=jdbc:mysql://127.0.0.1:3306/auth_center?autoReconnect=true&characterEncoding=utf-8&useUnicode=true&useSSL=false&serverTimezone=GMT
+  cas.authn.attributeRepository.jdbc[0].username=name
+  cas.authn.attributeRepository.jdbc[0].user=root
+  cas.authn.attributeRepository.jdbc[0].password=123456
+  cas.authn.attributeRepository.jdbc[0].sql=select * from sys_user where username=?
+  #取消以下两行则在返回属性中仅包含表中的这两个字段属性，注释情况下返回该表行所有属性
+  #cas.authn.attributeRepository.jdbc[0].attributes.id=id
+  #cas.authn.attributeRepository.jdbc[0].attributes.name=name
+  cas.authn.attributeRepository.jdbc[0].dialect=org.hibernate.dialect.MySQLDialect
+  cas.authn.attributeRepository.jdbc[0].ddlAuto=none
+  cas.authn.attributeRepository.jdbc[0].driverClass=com.mysql.cj.jdbc.Driver
+  cas.authn.attributeRepository.jdbc[0].leakThreshold=10
+  cas.authn.attributeRepository.jdbc[0].propagationBehaviorName=PROPAGATION_REQUIRED
+  cas.authn.attributeRepository.jdbc[0].batchSize=1
+  cas.authn.attributeRepository.jdbc[0].healthQuery=SELECT 1
+  cas.authn.attributeRepository.jdbc[0].failFast=true
+
+
+  {
+    "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+    "clientId": "client",
+    "clientSecret": "secret",
+    "serviceId": "^(https|imaps)://.*",
+    "name" : "OAUTH",
+    "jwtAccessToken": true,
+    "id" : 10009,
+    "attributeReleasePolicy" : {
+      "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+      "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ]
+    },
+    "supportedGrantTypes": [ "java.util.HashSet", [ "password" ] ]
+  }
+
+
+
